@@ -1,20 +1,36 @@
 param(
     [string]$BuildDir = "build-windows",
     [string]$Config = "Release",
+    [string]$Generator = "Visual Studio 17 2022",
     [switch]$Install
 )
 
 $ErrorActionPreference = "Stop"
 
+function Invoke-Checked {
+    param(
+        [Parameter(Mandatory = $true)]
+        [string]$Command,
+
+        [Parameter(ValueFromRemainingArguments = $true)]
+        [string[]]$Arguments
+    )
+
+    & $Command @Arguments
+    if ($LASTEXITCODE -ne 0) {
+        throw "$Command failed with exit code $LASTEXITCODE"
+    }
+}
+
 $repo = Resolve-Path (Join-Path $PSScriptRoot "..")
 Set-Location $repo
 
-cmake -S . -B $BuildDir -G "Visual Studio 17 2022" -A x64 -DCMAKE_BUILD_TYPE=$Config
-cmake --build $BuildDir --config $Config --target eq_dsp_tests
-ctest --test-dir $BuildDir -C $Config --output-on-failure
-cmake --build $BuildDir --config $Config --target AIAgentParametricEQ_VST3
+Invoke-Checked "cmake" @("-S", ".", "-B", $BuildDir, "-G", $Generator, "-A", "x64", "-DCMAKE_BUILD_TYPE=$Config")
+Invoke-Checked "cmake" @("--build", $BuildDir, "--config", $Config, "--target", "eq_dsp_tests")
+Invoke-Checked "ctest" @("--test-dir", $BuildDir, "-C", $Config, "--output-on-failure")
+Invoke-Checked "cmake" @("--build", $BuildDir, "--config", $Config, "--target", "AIAgentParametricEQ_VST3")
 
-$vst3 = Get-ChildItem -Path $BuildDir -Filter "AI Agent Parametric EQ.vst3" -Recurse -Directory | Select-Object -First 1
+$vst3 = Get-ChildItem -Path $BuildDir -Filter "AI Agent Parametric EQ.vst3" -Recurse | Select-Object -First 1
 if (-not $vst3) {
     throw "VST3 bundle was not found under $BuildDir"
 }
