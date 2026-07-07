@@ -1,0 +1,34 @@
+name: Windows VST3
+
+on:
+  push:
+    branches: [main]
+  pull_request:
+  workflow_dispatch:
+
+jobs:
+  build:
+    name: Build Windows VST3
+    runs-on: windows-latest
+
+    steps:
+      - name: Checkout
+        uses: actions/checkout@v4
+
+      - name: Configure, test, and build VST3
+        shell: pwsh
+        run: scripts/build-windows.ps1
+
+      - name: Locate VST3 bundle
+        id: vst3
+        shell: pwsh
+        run: |
+          $vst3 = Get-ChildItem -Path build-windows -Filter "AI Agent Parametric EQ.vst3" -Recurse -Directory | Select-Object -First 1
+          if (-not $vst3) { throw "VST3 bundle was not found" }
+          "path=$($vst3.FullName)" >> $env:GITHUB_OUTPUT
+
+      - name: Upload VST3 artifact
+        uses: actions/upload-artifact@v4
+        with:
+          name: AI-Agent-Parametric-EQ-Windows-VST3
+          path: ${{ steps.vst3.outputs.path }}

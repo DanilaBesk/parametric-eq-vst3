@@ -1,0 +1,23 @@
+# CMake/build output
+build*/
+cmake-build-*/
+CMakeCache.txt
+CMakeFiles/
+_deps/
+
+# Generated plugin artifacts
+*.vst3/
+*.component/
+*.aaxplugin/
+*.app/
+artifacts/
+
+# IDE/editor files
+.DS_Store
+.idea/
+.vscode/
+*.swp
+
+# Logs/temp
+*.log
+*.tmp
