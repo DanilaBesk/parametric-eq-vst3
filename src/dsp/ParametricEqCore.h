@@ -5,6 +5,7 @@
 #include <cmath>
 #include <complex>
 #include <cstddef>
+#include <numbers>
 
 namespace eq
 {
@@ -81,7 +82,7 @@ inline BiquadCoefficients designBiquad(const BandSettings& inputSettings, double
     settings.frequencyHz = clampFrequency(settings.frequencyHz, sampleRate);
     settings.q = clampQ(settings.q);
 
-    const auto omega = 2.0 * M_PI * settings.frequencyHz / sampleRate;
+    const auto omega = 2.0 * std::numbers::pi_v<double> * settings.frequencyHz / sampleRate;
     const auto sinOmega = std::sin(omega);
     const auto cosOmega = std::cos(omega);
     const auto alpha = sinOmega / (2.0 * settings.q);
@@ -181,7 +182,7 @@ inline BiquadCoefficients designBiquad(const BandSettings& inputSettings, double
 
 inline double magnitudeAt(const BiquadCoefficients& coefficients, double frequencyHz, double sampleRate)
 {
-    const auto omega = 2.0 * M_PI * clampFrequency(frequencyHz, sampleRate) / sampleRate;
+    const auto omega = 2.0 * std::numbers::pi_v<double> * clampFrequency(frequencyHz, sampleRate) / sampleRate;
     const std::complex<double> z1 = std::exp(std::complex<double>(0.0, -omega));
     const auto z2 = z1 * z1;
 
