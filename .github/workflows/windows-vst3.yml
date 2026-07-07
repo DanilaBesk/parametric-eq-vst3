@@ -27,8 +27,20 @@ jobs:
           if (-not $vst3) { throw "VST3 bundle was not found" }
           "path=$($vst3.FullName)" >> $env:GITHUB_OUTPUT
 
+      - name: Package VST3 bundle
+        id: package
+        shell: pwsh
+        run: |
+          $packageDir = Join-Path $PWD "dist"
+          $zipPath = Join-Path $packageDir "AI-Agent-Parametric-EQ-Windows-VST3.zip"
+          New-Item -ItemType Directory -Force -Path $packageDir | Out-Null
+          Copy-Item -Recurse -Force "${{ steps.vst3.outputs.path }}" $packageDir
+          if (Test-Path $zipPath) { Remove-Item -Force $zipPath }
+          Compress-Archive -Path (Join-Path $packageDir "AI Agent Parametric EQ.vst3") -DestinationPath $zipPath
+          "zip=$zipPath" >> $env:GITHUB_OUTPUT
+
       - name: Upload VST3 artifact
         uses: actions/upload-artifact@v4
         with:
           name: AI-Agent-Parametric-EQ-Windows-VST3
-          path: ${{ steps.vst3.outputs.path }}
+          path: ${{ steps.package.outputs.zip }}

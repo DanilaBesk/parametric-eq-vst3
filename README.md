@@ -18,6 +18,22 @@ Prerequisites on Windows:
 - Git.
 - Python 3.
 
+Use the prebuilt Windows plugin:
+
+1. Open the repository's `Actions` tab on GitHub.
+2. Open the latest successful `Windows VST3` run.
+3. Download the `AI-Agent-Parametric-EQ-Windows-VST3` artifact.
+4. Extract the downloaded artifact zip.
+5. Extract `AI-Agent-Parametric-EQ-Windows-VST3.zip` from inside it.
+6. Copy the extracted `AI Agent Parametric EQ.vst3` folder to:
+
+```text
+C:\Program Files\Common Files\VST3
+```
+
+Do not double-click the `.vst3` folder. It is a DAW plugin, not a standalone
+program. Load it from FL Studio's Plugin Manager.
+
 Build and install for FL Studio:
 
 ```powershell

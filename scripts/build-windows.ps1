@@ -30,7 +30,7 @@ Invoke-Checked "cmake" @("--build", $BuildDir, "--config", $Config, "--target", 
 Invoke-Checked "ctest" @("--test-dir", $BuildDir, "-C", $Config, "--output-on-failure")
 Invoke-Checked "cmake" @("--build", $BuildDir, "--config", $Config, "--target", "AIAgentParametricEQ_VST3")
 
-$vst3 = Get-ChildItem -Path $BuildDir -Filter "AI Agent Parametric EQ.vst3" -Recurse | Select-Object -First 1
+$vst3 = Get-ChildItem -Path $BuildDir -Filter "AI Agent Parametric EQ.vst3" -Recurse -Directory | Select-Object -First 1
 if (-not $vst3) {
     throw "VST3 bundle was not found under $BuildDir"
 }
